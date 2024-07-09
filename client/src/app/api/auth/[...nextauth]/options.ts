@@ -47,10 +47,8 @@ export const options: NextAuthOptions = {
           }
 
           const data = await response.json();
-          return {
-            ...data,
-            id: data.id
-          };
+          console.log(data);
+          return data;
         } catch (error) {
           console.error('Error during API call:', error);
           throw new Error('Failed to authenticate');
@@ -76,12 +74,12 @@ export const options: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user }) {
-      if (user) {
-        const {roleID,accessToken,id} = user.user
-        // const roleID = user.user.roleID;
-        // const accessToken = user.user.accessToken;
-        // const id = user.user.id ;
+    async jwt({ token, user:u }) {
+      if (u) {
+        const {user,access_token} = u as any
+        const roleID = user.roleID;
+        const accessToken = access_token;
+        const id = user.id ;
         const url = `${process.env.NEXT_PUBLIC_API_URL}/role/${roleID}`;
 
         try {
@@ -118,5 +116,6 @@ export const options: NextAuthOptions = {
 };
 // secretpassword
 
-// "email":"johndoe2024@gmail.com",
+// "email":"johndoe2024@gmail.com", MDC/RN/123456
 // "password":"secretpassword"
+

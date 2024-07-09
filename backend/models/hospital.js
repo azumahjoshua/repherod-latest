@@ -55,6 +55,28 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    bedCapacity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    availableBeds: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    emergencyServices: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    specialties: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [],
+    },
+    outpatientServices: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
   }, {
     sequelize,
     timestamps: false,

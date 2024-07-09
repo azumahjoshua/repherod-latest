@@ -29,65 +29,65 @@ const Registerform = () => {
   });
   const [passwordMatchError, setPasswordMatchError] = useState(false);
 
-  const allHospital = async()=>{
-    try {
-      const response = await fetch(hospitalUrl,{
-        method:"GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-      if(response.ok){
-        const data = await response.json();
-        const hospitalName = data.map((hospital:any)=>hospital.hospitalName)
-        setHopitalName(hospitalName)
-      }
-    } catch (error) {
-      console.error("Error during API call:", error);
-    }
-  }
-  useEffect(()=>{
-    allHospital();
-  })
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setPasswordMatchError(true);
-      return;
-    }
-    setPasswordMatchError(false);
+  // const allHospital = async()=>{
+  //   try {
+  //     const response = await fetch(hospitalUrl,{
+  //       method:"GET",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     if(response.ok){
+  //       const data = await response.json();
+  //       const region = data.map((hospital:any)=>hospital.region)
+  //       setHopitalName(region)
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during API call:", error);
+  //   }
+  // }
+  // useEffect(()=>{
+  //   allHospital();
+  // })
+  // const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   if (formData.password !== formData.confirmPassword) {
+  //     setPasswordMatchError(true);
+  //     return;
+  //   }
+  //   setPasswordMatchError(false);
 
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          contactInfo: formData.contactInfo,
-          email: formData.email,
-          password: formData.password,
-          roleName: formData.roleName,
-          hospitalName: hospitalName
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      });
+  //   try {
+  //     const response = await fetch(url, {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         firstName: formData.firstName,
+  //         lastName: formData.lastName,
+  //         contactInfo: formData.contactInfo,
+  //         email: formData.email,
+  //         password: formData.password,
+  //         roleName: formData.roleName,
+  //         region: region
+  //       }),
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        router.push("/login");
-      } else {
-        console.log("Error during API call:", "Something went wrong");
-        router.push("/register");
-      }
-    } catch (error) {
-      console.error("Error during API call:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       console.log(data);
+  //       router.push("/login");
+  //     } else {
+  //       console.log("Error during API call:", "Something went wrong");
+  //       router.push("/register");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during API call:", error);
+  //   }
+  // };
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -100,7 +100,7 @@ const Registerform = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4">
+    <form  className="mt-4">
       <div className="mb-4 flex space-x-4">
         <div>
           <label htmlFor="firstName" className="block text-gray-700">
@@ -181,9 +181,27 @@ const Registerform = () => {
           <option value="midwife">Mid Wife</option>
         </select>
       </div>
+      {/* <div className="mb-4">
+        <label htmlFor="region" className="block text-gray-700">
+          Region Of Facility
+        </label>
+        <select name="region" id="region"
+        onChange={handleChange}
+        className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-500"
+          defaultValue=""
+          required
+        >
+           <option value="" disabled hidden>Region</option>
+          {
+            region.map((name)=>(
+              <option key={name} value={name}>{name}</option>
+            ))
+          } 
+        </select>
+      </div> */}
       <div className="mb-4">
         <label htmlFor="hospitalName" className="block text-gray-700">
-          Choose Hospital
+        Name of Facility
         </label>
         <select name="hospitalName" id="hospialName"
         onChange={handleChange}
@@ -198,7 +216,6 @@ const Registerform = () => {
             ))
           }
         </select>
-
       </div>
       {passwordMatchError && (
         <div className="text-red-500 mb-4">Passwords do not match.</div>

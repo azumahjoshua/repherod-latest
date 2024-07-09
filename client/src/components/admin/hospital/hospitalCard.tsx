@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegEdit } from 'react-icons/fa';
 import { MdDeleteForever } from 'react-icons/md';
@@ -15,6 +16,7 @@ interface Hospital {
 const HospitalCard = () => {
   const [hospitalData, setHospitalData] = useState<Hospital[]>([]);
 
+
   useEffect(() => {
     const fetchHospitalData = async () => {
       try {
@@ -28,6 +30,7 @@ const HospitalCard = () => {
         });
         if (response.ok) {
           const data = await response.json();
+          // console.log(data)
           setHospitalData(data);
         } else {
           throw new Error('Failed to fetch data');
@@ -39,7 +42,33 @@ const HospitalCard = () => {
 
     fetchHospitalData();
   }, []);
-
+  const handleDelete = async(id:string)=>{
+    const confirmDelete = window.confirm("Are you sure you want to  delte this hopspital?")
+    if(!confirmDelete)
+      return
+    
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/hospital/${id}`;
+      const response = await fetch(url,{
+        method:"DELETE",
+        headers:{
+          Accept:'application/json',
+          'Content-Type': 'application/json',
+        }
+      })
+      if(response.ok){
+        setHospitalData(hospitalData.filter(hospital => hospital.id !== id))
+        console.log(`Hospital with id ${id} deleted successfully`);
+      }else{
+        throw new Error('Failed to delete hospital');
+      }
+    } catch (error) {
+      console.error('Error deleting hospital:', error);
+    }
+  }
+  if(hospitalData.length === 0){
+    return <div>Loading...</div>
+  }
   return (
     <table className="w-full table-auto">
       <thead>
@@ -66,7 +95,7 @@ const HospitalCard = () => {
       </thead>
       <tbody>
         {hospitalData.map((hospital, index) => (
-          <tr key={index} >
+          <tr key={hospital.id} >
             <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
             <td className="px-6 py-4 whitespace-nowrap">{hospital.hospitalName}</td>
             <td className="px-6 py-4 whitespace-nowrap">{hospital.location}</td>
@@ -74,9 +103,13 @@ const HospitalCard = () => {
             <td className="px-6 py-4 whitespace-nowrap">{hospital.email}</td>
             <td className="px-6 py-4 whitespace-nowrap">
               <div className="flex space-x-4">
+              <Link  href={`/admin/hospital/${hospital.id}`}>
                 <CgProfile />
+              </Link>
                 <FaRegEdit />
+              <button className="text-red-600 hover:text-red-800" onClick={()=>handleDelete(hospital.id)}>
                 <MdDeleteForever />
+              </button>
               </div>
             </td>
           </tr>

@@ -1,5 +1,6 @@
 const { Patient, Referral, sequelize } = require("../../models");
 const { uploadFileToS3 } = require("../util/s3Service");
+const { Op } = require('sequelize');
 
 const createReferral = async ({ referralData, patientData, files }) => {
   let transaction;
@@ -46,15 +47,18 @@ const createReferral = async ({ referralData, patientData, files }) => {
   }
 };
 const getReferralsByUser = async ({ userId }) => {
-  return Referral.findAll({ where: { userId } });
+  return Referral.findAll({ where: { userId }, include: [Patient] });
 };
 const getReferralsByOther = async ({ userId }) => {
   try {
     const referral = Referral.findAll({
       where: {
-        [sequelize.Op.ne]: userId,
+       userId:{
+         [Op.ne]: userId,
+       } 
       },
       order: [["createdAt", "DESC"]],
+      include: [Patient],
     });
     return referral;
   } catch (error) {
@@ -62,8 +66,18 @@ const getReferralsByOther = async ({ userId }) => {
     throw new Error("Failed to fetch referrals");
   }
 };
+const getReferralsByStatus = async({status})=>{
+  try {
+    const referral = await Referral.findAll({where :{ status:status}});
+    return referral;
+  } catch (error) {
+    console.error("Error fetching referrals:", error);
+    throw new Error("Failed to fetch referrals");
+  }
+}
 module.exports = {
   createReferral,
   getReferralsByUser,
   getReferralsByOther,
+  getReferralsByStatus
 };

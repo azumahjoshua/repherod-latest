@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 
 interface ReferralData {
   referralReason: string;
+  userId:string;
   referralDiagnosis: string;
   refType: string;
   temperature: string;
@@ -28,6 +29,7 @@ const ReferralForm: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [referralData, setReferralData] = useState<ReferralData>({
     referralReason: "",
+    userId:"",
     referralDiagnosis: "",
     refType: "",
     temperature: "",
@@ -72,7 +74,9 @@ const ReferralForm: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append("referralData", JSON.stringify(referralData));
+    formData.append("referralData", JSON.stringify({
+      ... referralData, userId: session?.user.id
+    }));
     formData.append("patientData", JSON.stringify(patientData));
     files.forEach((file) => {
       formData.append("files", file);
